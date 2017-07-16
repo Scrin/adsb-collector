@@ -1,0 +1,9 @@
+# InfluxDB details
+#influxUrlBase=http://localhost:8086
+#influxDatabase=adsb
+#influxUser=adsb
+#influxPassword=adsb
+
+# Host and port where SBS-1 BaseStation format messages can be read, ie. from dump1090
+#sbs.host=localhost
+#sbs.port=30003
