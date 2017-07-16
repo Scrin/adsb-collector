@@ -37,7 +37,7 @@ public class Message {
         "SPI",
         "IsOnGround"
     };
-    private static final Set<Integer> FIELD_DATA_TAGS = new HashSet(Arrays.asList(0, 1, 4, 5));
+    private static final Set<Integer> FIELD_DATA_TAGS = new HashSet(Arrays.asList(0, 1, 4, 5, 10));
 
     public Message(String raw) {
         this.raw = raw;
@@ -57,6 +57,9 @@ public class Message {
         }
         if (StringUtils.isNotBlank(rawArray[5])) {
             sb.append(",flightID=").append(rawArray[5].trim());
+        }
+        if (StringUtils.isNotBlank(rawArray[10])) {
+            sb.append(",callsign=").append(rawArray[10].trim());
         }
         sb.append(' ');
         for (int i = 2; i < FIELD_DATA.length; i++) {
