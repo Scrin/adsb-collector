@@ -76,8 +76,12 @@ public class Main {
             BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                Message m = new Message(line);
-                db.post(m);
+                try {
+                    Message m = new Message(line);
+                    db.post(m);
+                } catch (IllegalArgumentException ex) {
+                    LOG.warn("Invalid message! Skipping...", ex);
+                }
             }
         } catch (IOException ex) {
             LOG.error("Failed to connect", ex);
