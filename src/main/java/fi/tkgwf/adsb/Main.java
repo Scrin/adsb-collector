@@ -72,19 +72,33 @@ public class Main {
 
         try {
             InfluxDBConnection db = new InfluxDBConnection(influxUrl);
-            Socket s = new Socket(sbsHost, sbsPort);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                try {
-                    Message m = new Message(line);
-                    db.post(m);
-                } catch (IllegalArgumentException ex) {
-                    LOG.warn("Invalid message! Skipping...", ex);
+            while (true) {
+                try (Socket s = new Socket(sbsHost, sbsPort)) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    String line;
+                    try {
+                        while ((line = reader.readLine()) != null) {
+                            try {
+                                Message m = new Message(line);
+                                db.post(m);
+                            } catch (IllegalArgumentException ex) {
+                                LOG.warn("Invalid message! Skipping...", ex);
+                            }
+                        }
+                    } catch (IOException ex) {
+                        LOG.warn("Error reading from from socket. Connection lost? Retrying in 5 seconds...", ex);
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ex1) {
+                            LOG.error("Interrupted! Exiting...", ex1);
+                            break;
+                        }
+                    }
                 }
             }
         } catch (IOException ex) {
             LOG.error("Failed to connect", ex);
         }
+        System.out.println("Exiting...");
     }
 }
